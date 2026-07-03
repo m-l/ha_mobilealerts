@@ -26,6 +26,10 @@ class MobileAlertsOptionsFlowHandler(OptionsFlow):
     def __init__(self, config_entry: ConfigEntry) -> None:
         """Initialize options flow."""
         self.config_entry = config_entry
+        
+    @config_entry.setter
+    def config_entry(self, new_value):
+        self.config_entry = new_value
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
