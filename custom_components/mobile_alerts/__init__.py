@@ -61,6 +61,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
+    entry.async_on_unload(entry.add_update_listener(_async_update_listener))
+
     # await gateway.handle_sensor_update(bytes.fromhex("E06322C5E6241829EFCB988DC0D3E200E735273800E6352738010405090C100202020202020000000000000000000000000000000000000000000000000000"), 0x79)
     # await gateway.handle_sensor_update(bytes.fromhex("D66322C4331A065526A17A613AF3008C00B50A5F008B00B50A601A000000000000000000000000000000000000000000000000000000000000000000000000"), 0x04)
     # await gateway.handle_sensor_update(bytes.fromhex("ce5d8a6e0e1215ffffffffff4019114a0902040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"), 0x16)
@@ -70,6 +72,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # await gateway.handle_sensor_update(bytes.fromhex("ce5d8bcb801216ffffffffff4023128e0b04060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"), 0x3c)
 
     return True
+
+
+async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Reload the config entry when its options change."""
+    await hass.config_entries.async_reload(entry.entry_id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

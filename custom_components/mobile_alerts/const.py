@@ -12,6 +12,12 @@ MANUFACTURER: Final = "La Crosse Tech. / TFA Dostmann"
 
 CONF_GATEWAY: Final = "gateway_id"
 CONF_SEND_DATA_TO_CLOUD: Final = "send_data_to_cloud"
+CONF_MODE: Final = "mode"
+CONF_MQTT_TOPIC_PREFIX: Final = "mqtt_topic_prefix"
+
+MODE_ENTITIES: Final = "entities"
+MODE_MQTT: Final = "mqtt"
+DEFAULT_MQTT_TOPIC_PREFIX: Final = "/MobileAlerts/"
 
 STATE_ATTR_BY_EVENT: Final = "by_event"
 STATE_ATTR_ERROR: Final = "error"

@@ -14,7 +14,16 @@ from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 from mobilealerts import Gateway
 
-from .const import CONF_GATEWAY, CONF_SEND_DATA_TO_CLOUD, DOMAIN
+from .const import (
+    CONF_GATEWAY,
+    CONF_MODE,
+    CONF_MQTT_TOPIC_PREFIX,
+    CONF_SEND_DATA_TO_CLOUD,
+    DEFAULT_MQTT_TOPIC_PREFIX,
+    DOMAIN,
+    MODE_ENTITIES,
+    MODE_MQTT,
+)
 from .util import gateway_full_name, gateway_short_name
 
 _LOGGER = logging.getLogger(__name__)
@@ -36,16 +45,30 @@ class MobileAlertsOptionsFlowHandler(OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
+        options = self.config_entry.options
         return self.async_show_form(
             step_id="proxy",
             data_schema=vol.Schema(
                 {
                     vol.Required(
+                        CONF_MODE,
+                        default=options.get(CONF_MODE, MODE_ENTITIES),
+                    ): vol.In(
+                        {
+                            MODE_ENTITIES: "Native Home Assistant entities",
+                            MODE_MQTT: "MQTT gateway (sarnau-compatible)",
+                        }
+                    ),
+                    vol.Required(
                         CONF_SEND_DATA_TO_CLOUD,
-                        default=self.config_entry.options.get(
-                            CONF_SEND_DATA_TO_CLOUD, True
-                        ),
+                        default=options.get(CONF_SEND_DATA_TO_CLOUD, True),
                     ): bool,
+                    vol.Optional(
+                        CONF_MQTT_TOPIC_PREFIX,
+                        default=options.get(
+                            CONF_MQTT_TOPIC_PREFIX, DEFAULT_MQTT_TOPIC_PREFIX
+                        ),
+                    ): str,
                 }
             ),
         )
