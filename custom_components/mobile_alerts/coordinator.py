@@ -81,6 +81,11 @@ class MobileAlertesDataCoordinator(MobileAlertesBaseCoordinator, SensorHandler):
             value = measurement.value
             if not isinstance(value, (int, float)):
                 continue
+            if isinstance(value, float):
+                # The library computes some values as `x * 0.1`, which introduces
+                # binary floating-point noise (e.g. 18.400000000000002). Round to
+                # the sensors' real resolution so published values stay clean.
+                value = round(value, 4)
             m_type = measurement.type
             if m_type == MeasurementType.TEMPERATURE:
                 key = "temperature" if not measurement.prefix else "temperatureExt"

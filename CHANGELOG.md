@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [0.3.2] - 2026-09-06
+
+### Fixed
+
+- Published measurement values are rounded to 4 decimals, removing binary floating-point noise (e.g. `18.400000000000002` now published as `18.4`) that the library introduces for values computed as `x * 0.1`.
+
 ## [0.3.1] - 2026-09-06
 
 ### Added
