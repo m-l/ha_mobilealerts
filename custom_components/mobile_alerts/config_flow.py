@@ -23,14 +23,6 @@ _LOGGER = logging.getLogger(__name__)
 class MobileAlertsOptionsFlowHandler(OptionsFlow):
     """Handle a MobileAlerts options flow."""
 
-    def __init__(self, config_entry: ConfigEntry) -> None:
-        """Initialize options flow."""
-        self.config_entry = config_entry
-        
-    @config_entry.setter
-    def config_entry(self, new_value):
-        self.config_entry = new_value
-
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
@@ -187,4 +179,4 @@ class MobileAlertsConfigFlowHandler(ConfigFlow, domain=DOMAIN):
         config_entry: ConfigEntry,
     ) -> MobileAlertsOptionsFlowHandler:
         """Get the options flow for this handler."""
-        return MobileAlertsOptionsFlowHandler(config_entry)
+        return MobileAlertsOptionsFlowHandler()
