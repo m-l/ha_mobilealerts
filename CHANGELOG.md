@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [0.3.3] - 2026-09-06
+
+### Fixed
+
+- Cloud forwarding ("Send data to cloud") now relays directly to the Mobile-Alerts cloud instead of routing through the gateway's previously configured upstream proxy. Previously, if that proxy was a local server that had since been stopped (e.g. maserver), every forward failed with `ConnectionRefusedError`. Local MQTT/entity data was unaffected; only the cloud copy erred.
+
 ## [0.3.2] - 2026-09-06
 
 ### Fixed

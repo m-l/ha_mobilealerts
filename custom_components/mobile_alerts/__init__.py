@@ -42,6 +42,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await proxy.start()
     proxy.attach_gateway(gateway)
 
+    # Relay cloud data straight to the Mobile-Alerts cloud instead of via the
+    # gateway's previously configured upstream proxy. If that proxy was a local
+    # server that has since been removed (e.g. maserver), routing cloud resends
+    # through it fails with connection-refused; forwarding directly avoids that
+    # while still keeping the official app working. (No public setter exists.)
+    gateway._orig_use_proxy = False  # noqa: SLF001
+
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
 
     await coordinator.async_get_or_create_gateway_device()
