@@ -53,8 +53,8 @@ gateway_descriptions: list[tuple[SensorEntityDescription, Callable[[Gateway], st
             entity_category=EntityCategory.DIAGNOSTIC,
         ),
         lambda gateway: ("http://%s:%s") % (
-            gateway.orig_proxy,
-            gateway.orig_proxy_port,
+            gateway.proxy,
+            gateway.proxy_port,
         ),
     ),
 ]
