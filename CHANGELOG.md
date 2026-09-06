@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [0.3.1] - 2026-09-06
+
+### Added
+
+- Rain sensors now publish `eventCounter` (cumulative bucket-tip counter) and `eventTimes` (seconds since each of the last 9 events), parsed directly from the packet following the MMMMobileAlerts ID08 layout. This resolves the rain limitation noted in 0.3.0 and restores compatibility with rain-gauge counter templates.
+
+## [0.3.0] - 2026-09-06
+
+### Added
+
+- MQTT gateway payload now includes per-sensor metadata with maserver-compatible keys: `id`, `t` (reading time, ISO 8601 UTC), `lastTransmit` (transmit interval), `offline`, `by_event`, `counter`, `model` and `name`.
+- Wind direction is published as both `directionDegree` (degrees) and `direction` (16-point compass string).
+
+### Fixed
+
+- Wind values (`windSpeed`, `gustSpeed`) are now published as scalars, not single-element arrays, matching the maserver format expected by existing `mqtt:` sensor templates.
+
+### Known limitations
+
+- `offline` is always `false` (the integration publishes on transmit only; there is no post-silence watchdog — use the age of `t` for staleness).
+- maserver rain event fields (`eventCounter`, `eventTimes`) are not produced; the library exposes rain only as a cumulative measurement.
+
+## [0.2.3] - 2026-09-06
+
+### Added
+
+- MQTT gateway mode now publishes battery status as `battery` (`"ok"` / `"low"`), matching the maserver JSON format.
+
 ## [0.2.2] - 2026-09-06
 
 ### Changed

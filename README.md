@@ -36,13 +36,48 @@ The broker connection is **not** configured here — messages are published thro
 
 #### Payload
 
-The JSON document is keyed by measurement, each value an array (index `0` is the current reading):
+Environmental measurements are published as **arrays** (templates read index `0`); wind values and all metadata are **scalars**. Each message also carries per-sensor metadata:
 
 ```json
-{ "temperature": [21.3], "humidity": [55], "temperatureExt": [12.1] }
+{
+  "temperature": [21.3],
+  "humidity": [55],
+  "temperatureExt": [12.1],
+  "windSpeed": 0.2,
+  "gustSpeed": 1.0,
+  "directionDegree": 90,
+  "direction": "E",
+  "battery": "ok",
+  "offline": false,
+  "id": "094596df5368",
+  "t": "2022-09-15T06:27:50.000Z",
+  "lastTransmit": 360,
+  "by_event": false,
+  "counter": 54242,
+  "model": "MA10238",
+  "name": "Air pressure monitor (...)"
+}
 ```
 
-A second temperature probe (pool / external) is published as `temperatureExt`.
+| Key | Type | Notes |
+| --- | --- | --- |
+| `temperature`, `temperatureExt`, `humidity`, `airPressure`, `co2`, `rain` | array | Index `0` is the current value. `temperatureExt` is a second/external probe (pool, water). |
+| `windSpeed`, `gustSpeed` | scalar | m/s |
+| `directionDegree` | scalar | Wind direction in degrees |
+| `direction` | scalar | 16-point compass string (`N`, `NNE`, ...) |
+| `wetness`, `contact` | scalar | Leakage / door-window sensors |
+| `eventCounter` | scalar | Rain sensors: cumulative bucket-tip counter |
+| `eventTimes` | array | Rain sensors: seconds since each of the last 9 events (`[0]` is the most recent; `0` = an event in this transmission) |
+| `battery` | scalar | `"ok"` or `"low"` |
+| `t` | scalar | Reading time, ISO 8601 UTC |
+| `lastTransmit` | scalar | Sensor transmit interval, seconds |
+| `id` | scalar | Sensor id (also in the topic) |
+| `by_event` | scalar | `true` if triggered by an event rather than a scheduled report |
+| `counter` | scalar | Packet counter |
+| `offline` | scalar | Always `false` — see note below |
+| `model`, `name` | scalar | Sensor model / name |
+
+> **`offline`:** the integration publishes only when a sensor transmits, so `offline` is always `false` (there is no watchdog that flips it to `true` after silence — use the age of `t` for staleness instead). Rain sensors additionally publish `eventCounter` and `eventTimes`, parsed directly from the packet, so rain-gauge templates that count bucket tips work as they did with maserver.
 
 Example `mqtt:` sensor reusing the published data:
 
@@ -57,6 +92,17 @@ mqtt:
       name: "Garage Humidity"
       value_template: "{{ value_json.humidity[0] | float }}"
       unit_of_measurement: "%"
+```
+
+Battery (and, if you want it, a staleness check based on the age of `t`) as binary sensors:
+
+```yaml
+mqtt:
+  binary_sensor:
+    - state_topic: "/MobileAlerts/094596df5368/json"
+      name: "Garage sensor battery"
+      device_class: battery
+      value_template: "{{ 'ON' if value_json.battery == 'low' else 'OFF' }}"
 ```
 
 ### Send data to cloud
