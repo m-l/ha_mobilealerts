@@ -35,7 +35,7 @@ gateway_descriptions: list[tuple[
             icon="mdi:server-network-off",
             entity_category=EntityCategory.DIAGNOSTIC,
         ),
-        lambda gateway: bool(gateway.orig_use_proxy),
+        lambda gateway: bool(gateway.use_proxy),
     ),
 ]
 

@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [0.3.4] - 2026-09-06
+
+### Fixed
+
+- The "proxy is used" gateway diagnostic now reflects the live proxy state (`use_proxy`) instead of the preserved original (`orig_use_proxy`).
+- Options-flow fields now have proper labels and descriptions: `Mode` and `MQTT topic prefix` no longer render as raw keys.
+
 ## [0.3.3] - 2026-09-06
 
 ### Fixed
