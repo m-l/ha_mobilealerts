@@ -14,6 +14,7 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntityDescription,
 )
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo, EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -236,6 +237,10 @@ async def async_setup_entry(
     _LOGGER.debug("async_setup_entry %s", entry)
 
     coordinator: MobileAlertesBaseCoordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator.register_add_entities(Platform.BINARY_SENSOR, async_add_entities)
+    entry.async_on_unload(
+        lambda: coordinator.unregister_add_entities(Platform.BINARY_SENSOR)
+    )
     async_add_entities(create_gateway_binary_sensor_entities(coordinator.gateway))
 
     sensors: list[Sensor] = coordinator.gateway.sensors

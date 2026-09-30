@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [0.3.12] - 2026-09-30
+
+### Fixed
+
+- Native-entities mode: binary sensors (low battery, and contact/wetness sensors) for a newly discovered sensor were not created until the integration was reloaded. Since 0.3.6, new entities are added through each platform's registered `async_add_entities` callback, but the registration in `binary_sensor.py` was never committed, so only the `sensor` platform had one. The binary sensor platform now registers and unregisters its callback like the sensor platform. MQTT gateway mode was not affected.
+
 ## [0.3.11] - 2026-09-30
 
 ### Fixed
