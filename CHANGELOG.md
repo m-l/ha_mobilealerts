@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [0.3.8] - 2026-09-30
+
+### Fixed
+
+- Native-entities mode: the rain-by-period sensors (last rain, last hour rain, last day rain) raised `RuntimeError: dictionary changed size during iteration` when an old reading aged out of its window, because expired entries were removed while iterating over the dictionary. The loop now iterates over a copy. Same fix as Silver-Volt4/ha_mobilealerts@28c70ed.
+
 ## [0.3.7] - 2026-09-07
 
 ### Fixed

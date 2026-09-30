@@ -19,6 +19,7 @@ from homeassistant.const import (
     CONCENTRATION_PARTS_PER_MILLION,
     DEGREE,
     PERCENTAGE,
+    Platform,
     UnitOfLength,
     UnitOfPressure,
     UnitOfSpeed,
@@ -305,7 +306,9 @@ class MobileAlertesPeriodRainSensor(MobileAlertesSensor):
                 )
                 self._last_update = last_rain_time
 
-        for measurement_time in self._measurements.keys():
+        # Iterate over a copy: expired entries are popped inside the loop, and
+        # mutating a dict while iterating its keys raises RuntimeError.
+        for measurement_time in list(self._measurements.keys()):
             if measurement_time < (now - self._period):
                 _LOGGER.debug(
                     "period_rain update_data_from_sensor removed (%s: %s)",
@@ -425,6 +428,10 @@ async def async_setup_entry(
     _LOGGER.debug("async_setup_entry %s", entry)
 
     coordinator: MobileAlertesBaseCoordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator.register_add_entities(Platform.SENSOR, async_add_entities)
+    entry.async_on_unload(
+        lambda: coordinator.unregister_add_entities(Platform.SENSOR)
+    )
     async_add_entities(create_gateway_sensor_entities(coordinator.gateway))
 
     sensors: list[Sensor] = coordinator.gateway.sensors
