@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [0.3.11] - 2026-09-30
+
+### Fixed
+
+- Native-entities mode: temperature, humidity, CO2, air pressure, wind speed and gust sensors now declare `state_class: measurement`. Without a state class Home Assistant records no long-term statistics for a sensor, so these entities never had any. Users coming from a fork that did set it (for example Iminet72/ha_mobilealerts) saw a repair notice, "we have generated statistics in the past, but it no longer has a state class", and their statistics stopped. With the state class restored, statistics resume under the same entity ids and the existing history is kept. Sensors with an `enum` device class (key press) deliberately have none, because Home Assistant does not allow a state class there.
+
+## [0.3.10] - 2026-09-30
+
+### Fixed
+
+- Sensor devices are now linked to their gateway with `via_device_id` (the gateway device's registry id) instead of the deprecated `via_device` identifier tuple, which Home Assistant will stop accepting in 2027.8.0. The gateway's id is captured when the gateway device is registered, which happens before any sensor device is created. On Home Assistant versions that predate `via_device_id` the integration detects this and keeps using `via_device`.
+
 ## [0.3.9] - 2026-09-30
 
 ### Changed

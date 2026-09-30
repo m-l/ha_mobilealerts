@@ -36,6 +36,13 @@ from .util import gateway_full_name
 
 _LOGGER = logging.getLogger(__name__)
 
+# `via_device` (an identifier tuple) is deprecated in favour of `via_device_id`
+# (the registry id of the parent device). Older Home Assistant versions do not
+# know `via_device_id`, so detect support instead of assuming it.
+_VIA_DEVICE_ID_SUPPORTED = "via_device_id" in (
+    DeviceInfo.__optional_keys__ | DeviceInfo.__required_keys__
+)
+
 
 class MobileAlertesBaseCoordinator(DataUpdateCoordinator):
     """Base class to manage MobileAlerts data."""
@@ -61,6 +68,9 @@ class MobileAlertesBaseCoordinator(DataUpdateCoordinator):
         # Last transmit counter published per sensor, used to drop repeated
         # packets (maserver ignored a packet whose counter was unchanged).
         self._last_published_counter: dict[str, int] = {}
+        # Registry id of the gateway device; sensor devices link to it through
+        # `via_device_id`. Set by async_get_or_create_gateway_device().
+        self.gateway_device_id: str | None = None
 
     async def async_get_or_create_gateway_device(self) -> None:         
         _id = self._gateway.gateway_id
@@ -78,6 +88,7 @@ class MobileAlertesBaseCoordinator(DataUpdateCoordinator):
             hw_version=self._gateway.version,
         )
         _LOGGER.debug("async_get_or_create_gateway_device device: %s", device_entry)
+        self.gateway_device_id = device_entry.id
 
     async def _async_update_data(self):
         """Update state of the gateway."""
@@ -188,8 +199,15 @@ class MobileAlertesEntity(CoordinatorEntity, RestoreEntity):
             manufacturer=MANUFACTURER,
             model=self._sensor.model,
             name=self._sensor.name,
-            via_device=(DOMAIN, self._sensor.parent.gateway_id),
         )
+
+        # Link the sensor to its gateway. The gateway device is registered
+        # before any sensor device (see async_setup_entry), so its id is known.
+        gateway_device_id = self.coordinator.gateway_device_id
+        if _VIA_DEVICE_ID_SUPPORTED and gateway_device_id is not None:
+            device_info["via_device_id"] = gateway_device_id
+        else:
+            device_info["via_device"] = (DOMAIN, self._sensor.parent.gateway_id)
 
         area_registry = ar.async_get(self.hass)
         if area_registry.async_get_area_by_name(self._sensor.name):

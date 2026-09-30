@@ -85,21 +85,25 @@ descriptions: dict[MeasurementType, SensorEntityDescription] = {
     MeasurementType.TEMPERATURE: SensorEntityDescription(
         key=None,
         device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
     ),
     MeasurementType.HUMIDITY: SensorEntityDescription(
         key=None,
         device_class=SensorDeviceClass.HUMIDITY,
+        state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement=PERCENTAGE,
     ),
     MeasurementType.CO2: SensorEntityDescription(
         key=None,
         device_class=SensorDeviceClass.CO2,
+        state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement=CONCENTRATION_PARTS_PER_MILLION,
     ),
     MeasurementType.AIR_PRESSURE: SensorEntityDescription(
         key=None,
         device_class=SensorDeviceClass.PRESSURE,
+        state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement=UnitOfPressure.HPA,
     ),
     MeasurementType.RAIN: SensorEntityDescription(
@@ -118,12 +122,14 @@ descriptions: dict[MeasurementType, SensorEntityDescription] = {
         key=None,
         icon="mdi:weather-windy",
         device_class=SensorDeviceClass.WIND_SPEED,
+        state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement=UnitOfSpeed.METERS_PER_SECOND,
     ),
     MeasurementType.GUST: SensorEntityDescription(
         key=None,
         icon="mdi:weather-windy",
         device_class=SensorDeviceClass.WIND_SPEED,
+        state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement=UnitOfSpeed.METERS_PER_SECOND,
     ),
     MeasurementType.WIND_DIRECTION: SensorEntityDescription(
