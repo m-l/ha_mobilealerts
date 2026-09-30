@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [0.3.13] - 2026-09-30
+
+### Added
+
+- Repository: a GitHub Action (`.github/workflows/changelog.yml`) that fails a push or pull request when the newest `CHANGELOG.md` heading does not match the version in `manifest.json`, when that section is empty or has no date, when versions are duplicated or out of order, or when `custom_components/` changes without a `CHANGELOG.md` change in the same push. The logic is in `.github/scripts/check_changelog.py`, which can also be run locally. No change to the integration itself.
+
 ## [0.3.12] - 2026-09-30
 
 ### Fixed
