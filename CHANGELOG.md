@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [0.3.5] - 2026-09-07
+
+### Fixed
+
+- Removed use of the deprecated `device_registry.devices` mapping; the integration now uses `async_entries_for_config_entry` to find its devices.
+- Replaced deprecated `hass.async_add_job` with `hass.async_create_task` when adding entities for newly discovered sensors.
+
 ## [0.3.4] - 2026-09-06
 
 ### Fixed

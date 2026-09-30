@@ -151,7 +151,7 @@ class MobileAlertesDataCoordinator(MobileAlertesBaseCoordinator, SensorHandler):
             self._entry.entry_id, None
         )
         if binary_entity_platform is not None:
-            self.hass.async_add_job(
+            self.hass.async_create_task(
                 binary_entity_platform.async_add_entities(
                     create_binary_sensor_entities(self, sensor), True
                 )
@@ -162,7 +162,7 @@ class MobileAlertesDataCoordinator(MobileAlertesBaseCoordinator, SensorHandler):
             self._entry.entry_id, None
         )
         if sensor_entity_platform is not None:
-            self.hass.async_add_job(
+            self.hass.async_create_task(
                 sensor_entity_platform.async_add_entities(
                     create_sensor_entities(self, sensor), True
                 )

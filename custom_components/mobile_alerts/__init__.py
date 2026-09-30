@@ -55,11 +55,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     device_registry = dr.async_get(hass)
 
-    for device in device_registry.devices.values():
-        if (
-            entry.entry_id in device.config_entries
-            and (DOMAIN, gateway.gateway_id) not in device.identifiers
-        ):
+    for device in dr.async_entries_for_config_entry(device_registry, entry.entry_id):
+        if (DOMAIN, gateway.gateway_id) not in device.identifiers:
             for identifier in device.identifiers:
                 if identifier[0] == DOMAIN:
                     gateway.add_sensor(Sensor(gateway, identifier[1], device.name))
