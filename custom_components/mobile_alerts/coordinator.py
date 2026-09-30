@@ -100,6 +100,19 @@ class MobileAlertesDataCoordinator(MobileAlertesBaseCoordinator, SensorHandler):
         if not payload:
             return
 
+        # Drop a packet already published: the gateway can deliver the same
+        # sensor packet more than once, and a repeat would otherwise be counted
+        # again by consumers that accumulate (rain event counters). maserver
+        # skipped packets whose transmit counter was unchanged; do the same.
+        if self._last_published_counter.get(sensor.sensor_id) == sensor.counter:
+            _LOGGER.debug(
+                "Skipping duplicate packet from %s (counter %s)",
+                sensor.sensor_id,
+                sensor.counter,
+            )
+            return
+        self._last_published_counter[sensor.sensor_id] = sensor.counter
+
         # Per-sensor metadata (maserver-compatible keys)
         payload["id"] = sensor.sensor_id.lower()
         payload["battery"] = "low" if sensor.low_battery else "ok"
@@ -139,6 +152,22 @@ class MobileAlertesDataCoordinator(MobileAlertesBaseCoordinator, SensorHandler):
         _LOGGER.debug("Publishing MQTT %s -> %s", topic, payload)
         await async_publish(self.hass, topic, json.dumps(payload), retain=True)
 
+    def _add_sensor_entities(self, sensor: Sensor) -> None:
+        """Create entities for a newly discovered sensor on each loaded platform."""
+        for platform, create_entities in (
+            (Platform.BINARY_SENSOR, create_binary_sensor_entities),
+            (Platform.SENSOR, create_sensor_entities),
+        ):
+            add_entities = self._add_entities_callbacks.get(platform)
+            if add_entities is None:
+                continue
+            entities = create_entities(self, sensor)
+            # Register with the coordinator first, exactly as platform setup
+            # does, so calculated entities (e.g. rain per period) can find the
+            # entities they depend on.
+            self.add_entities(entities)
+            add_entities(entities, True)
+
     async def sensor_added(self, sensor: Sensor) -> None:
         _LOGGER.debug("sensor_added %r", sensor)
 
@@ -146,27 +175,7 @@ class MobileAlertesDataCoordinator(MobileAlertesBaseCoordinator, SensorHandler):
             await self._publish_mqtt(sensor)
             return
 
-        binary_entity_component = self.hass.data[Platform.BINARY_SENSOR]
-        binary_entity_platform = binary_entity_component._platforms.get(
-            self._entry.entry_id, None
-        )
-        if binary_entity_platform is not None:
-            self.hass.async_create_task(
-                binary_entity_platform.async_add_entities(
-                    create_binary_sensor_entities(self, sensor), True
-                )
-            )
-
-        sensor_entity_component = self.hass.data[Platform.SENSOR]
-        sensor_entity_platform = sensor_entity_component._platforms.get(
-            self._entry.entry_id, None
-        )
-        if sensor_entity_platform is not None:
-            self.hass.async_create_task(
-                sensor_entity_platform.async_add_entities(
-                    create_sensor_entities(self, sensor), True
-                )
-            )
+        self._add_sensor_entities(sensor)
 
         self.hass.config_entries.async_update_entry(self._entry)
 

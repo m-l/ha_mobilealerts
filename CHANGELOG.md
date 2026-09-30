@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [0.3.7] - 2026-09-07
+
+### Fixed
+
+- MQTT gateway mode no longer republishes a sensor packet it has already published. The gateway can deliver the same packet more than once and the library reports every delivery as an update, so a repeat was published again and counted a second time by accumulating consumers such as rain event-counter templates. Packets are now dropped when their transmit counter is unchanged, matching maserver.
+
+## [0.3.6] - 2026-09-07
+
+### Fixed
+
+- Native-entities mode no longer reaches into Home Assistant's private `hass.data[Platform.*]._platforms` to add entities for newly discovered sensors. Each platform now registers its public `async_add_entities` callback with the coordinator during setup (and unregisters on unload), which is stable across Home Assistant versions.
+- Entities created at runtime for newly discovered sensors are now also registered with the coordinator, as platform setup already did, so calculated entities (rain per period, is raining) can locate the entities they depend on without needing a reload first.
+
 ## [0.3.5] - 2026-09-07
 
 ### Fixed

@@ -9,10 +9,12 @@ import time
 from datetime import datetime, timedelta
 
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, State, callback
 from homeassistant.helpers import area_registry as ar
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.restore_state import ExtraStoredData, RestoreEntity
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -55,6 +57,10 @@ class MobileAlertesBaseCoordinator(DataUpdateCoordinator):
         self._gateway_ip: str | None = gateway.ip_address
         self._proxy.set_handler(self)
         self._entities: dict[Measurement, MobileAlertesEntity] = {}
+        self._add_entities_callbacks: dict[Platform, AddEntitiesCallback] = {}
+        # Last transmit counter published per sensor, used to drop repeated
+        # packets (maserver ignored a packet whose counter was unchanged).
+        self._last_published_counter: dict[str, int] = {}
 
     async def async_get_or_create_gateway_device(self) -> None:         
         _id = self._gateway.gateway_id
@@ -88,6 +94,20 @@ class MobileAlertesBaseCoordinator(DataUpdateCoordinator):
 
     def get_entity(self, measurement: Measurement) -> MobileAlertesEntity | None:
         return self._entities.get(measurement)
+
+    def register_add_entities(
+        self, platform: Platform, add_entities: AddEntitiesCallback
+    ) -> None:
+        """Remember a platform's add-entities callback.
+
+        Lets the coordinator add entities for sensors discovered after the
+        platform was set up, without touching Home Assistant internals.
+        """
+        self._add_entities_callbacks[platform] = add_entities
+
+    def unregister_add_entities(self, platform: Platform) -> None:
+        """Forget a platform's add-entities callback (on unload)."""
+        self._add_entities_callbacks.pop(platform, None)
 
     @property
     def gateway(self) -> Gateway:
