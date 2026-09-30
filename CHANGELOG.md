@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning].
 ### Changed
 
 - Documentation: README explains the state classes and long-term statistics in native-entities mode, and what to do about the "no longer has a state class" repair notice after switching from another fork.
+- `manifest.json`: added `@m-l` to `codeowners`, so the maintainer of this fork is listed as an author in HACS. Credits in the README updated to match.
 
 ## [0.3.10] - 2026-09-30
 

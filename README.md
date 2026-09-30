@@ -175,4 +175,5 @@ When enabled (default), the integration forwards received data to the Mobile-Ale
 - Protocol and JSON format: [MMMMobileAlerts](https://github.com/sarnau/MMMMobileAlerts) by [@sarnau](https://github.com/sarnau)
 - Original Home Assistant integration: [@PlusPlus-ua](https://github.com/PlusPlus-ua/ha_mobilealerts)
 - Home Assistant 2024.x compatibility: [@greiter](https://github.com/greiter), [@Silver-Volt4](https://github.com/Silver-Volt4), [@msvb04](https://github.com/msvb04)
+- This fork (MQTT gateway mode with the sarnau-compatible payload, rain event decoding, and the fixes listed in the changelog): [@m-l](https://github.com/m-l)
 
