@@ -121,3 +121,6 @@ Fix compatibility with frozen dataclasses for Home Assistant 2024.x
 ### Changed
 
 - Improved handling of rain sensor.
+
+[Keep a Changelog]: https://keepachangelog.com/en/1.1.0/
+[Semantic Versioning]: https://semver.org/spec/v2.0.0.html
