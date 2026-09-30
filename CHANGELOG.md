@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning].
 
 - Native-entities mode: temperature, humidity, CO2, air pressure, wind speed and gust sensors now declare `state_class: measurement`. Without a state class Home Assistant records no long-term statistics for a sensor, so these entities never had any. Users coming from a fork that did set it (for example Iminet72/ha_mobilealerts) saw a repair notice, "we have generated statistics in the past, but it no longer has a state class", and their statistics stopped. With the state class restored, statistics resume under the same entity ids and the existing history is kept. Sensors with an `enum` device class (key press) deliberately have none, because Home Assistant does not allow a state class there.
 
+### Changed
+
+- Documentation: README explains the state classes and long-term statistics in native-entities mode, and what to do about the "no longer has a state class" repair notice after switching from another fork.
+
 ## [0.3.10] - 2026-09-30
 
 ### Fixed

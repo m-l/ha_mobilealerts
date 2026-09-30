@@ -22,7 +22,9 @@ Once added, open the integration's **Configure** dialog to choose how readings a
 
 ### Modes
 
-**Native Home Assistant entities** (default) — each measurement becomes a Home Assistant `sensor` / `binary_sensor` entity.
+**Native Home Assistant entities** (default) — each measurement becomes a Home Assistant `sensor` / `binary_sensor` entity. Temperature, humidity, CO2, air pressure, wind speed and gust sensors have state class `measurement`, and rain totals `total_increasing`, so Home Assistant keeps long-term statistics for them.
+
+> **Coming from another fork?** Before version 0.3.11 these sensors had no state class. If you previously ran a fork that did set one (for example Iminet72/ha_mobilealerts), Home Assistant may show the repair notice "we have generated statistics in the past, but it no longer has a state class". Update to 0.3.11 or later and restart. Do **not** press the button that deletes the long-term statistics: with the state class back, the entity keeps recording under the same entity id and its existing history is kept.
 
 **MQTT gateway (sarnau-compatible)** — each sensor's readings are published as a single JSON document to:
 
