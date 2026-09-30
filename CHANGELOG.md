@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [0.3.9] - 2026-09-30
+
+### Changed
+
+- Documentation: README now has a rain sensor example (total in mm, calibrated total from the tip counter, time of the last tip, a "rain tip" binary sensor, and daily/hourly totals via a utility meter), with notes on calibration and on why rain entities should not use a short `expire_after`.
+- Documentation: added a note that some models omit keys such as `lastTransmit`, and that templates should read them with `value_json.get('key')`.
+- Documentation: corrected the battery example's introduction, which promised a staleness check it did not show.
+
 ## [0.3.8] - 2026-09-30
 
 ### Fixed
