@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [0.3.14] - 2026-09-30
+
+### Fixed
+
+- Native-entities mode: the CO2 sensor no longer uses the deprecated `CONCENTRATION_PARTS_PER_MILLION` constant, which Home Assistant removes in Core 2027.8 (logged as "The deprecated constant CONCENTRATION_PARTS_PER_MILLION was used from mobile_alerts"). It now uses `UnitOfRatio.PARTS_PER_MILLION`. Both are the string `ppm`, so existing statistics are unaffected. Home Assistant versions that predate `UnitOfRatio` keep using the old constant, detected at import time. A scan of every name the integration imports from Home Assistant found no other deprecated constants.
+
 ## [0.3.13] - 2026-09-30
 
 ### Added

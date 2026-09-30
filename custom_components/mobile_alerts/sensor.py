@@ -16,7 +16,6 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
-    CONCENTRATION_PARTS_PER_MILLION,
     DEGREE,
     PERCENTAGE,
     Platform,
@@ -44,6 +43,16 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+# CONCENTRATION_PARTS_PER_MILLION is deprecated (removal in HA Core 2027.8) in favour of
+# UnitOfRatio.PARTS_PER_MILLION. Both are the string "ppm", so statistics are unaffected.
+# UnitOfRatio does not exist in older Home Assistant releases, hence the fallback.
+try:
+    from homeassistant.const import UnitOfRatio
+
+    _UNIT_PPM = UnitOfRatio.PARTS_PER_MILLION
+except ImportError:
+    from homeassistant.const import CONCENTRATION_PARTS_PER_MILLION as _UNIT_PPM
 
 
 gateway_descriptions: list[tuple[SensorEntityDescription, Callable[[Gateway], str]]] = [
@@ -98,7 +107,7 @@ descriptions: dict[MeasurementType, SensorEntityDescription] = {
         key=None,
         device_class=SensorDeviceClass.CO2,
         state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement=CONCENTRATION_PARTS_PER_MILLION,
+        native_unit_of_measurement=_UNIT_PPM,
     ),
     MeasurementType.AIR_PRESSURE: SensorEntityDescription(
         key=None,
